@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 const API_KEY = 'reqres_e48f03f7815f4f14bf28d49d7f14f0ab';
 
-// 1️⃣ GET single user (existing)
+
 test('GET Single User - Existing', async ({ request }) => {
     const response = await request.get('https://reqres.in/api/users/2', {
         headers: { Authorization: `Bearer ${API_KEY}` },
@@ -13,7 +13,6 @@ test('GET Single User - Existing', async ({ request }) => {
     console.log('User:', data.data.first_name, data.data.last_name);
 });
 
-// 2️⃣ GET single user (non-existing)
 test('GET Single User - Not Found', async ({ request }) => {
     const response = await request.get('https://reqres.in/api/users/23', {
         headers: { Authorization: `Bearer ${API_KEY}` },
@@ -21,7 +20,7 @@ test('GET Single User - Not Found', async ({ request }) => {
     expect(response.status()).toBe(404);
 });
 
-// 3️⃣ POST Register Successful
+
 test('POST Register Successful', async ({ request }) => {
     const response = await request.post('https://reqres.in/api/register', {
         data: { email: 'eve.holt@reqres.in', password: 'pistol' },
@@ -33,7 +32,7 @@ test('POST Register Successful', async ({ request }) => {
     console.log('Token:', data.token);
 });
 
-// 4️⃣ POST Register Unsuccessful
+
 test('POST Register Unsuccessful', async ({ request }) => {
     const response = await request.post('https://reqres.in/api/register', {
         data: { email: 'sydney@fife' }, // missing password
@@ -44,7 +43,7 @@ test('POST Register Unsuccessful', async ({ request }) => {
     expect(data.error).toBe('Missing password');
 });
 
-// 5️⃣ POST Login Successful
+
 test('POST Login Successful', async ({ request }) => {
     const response = await request.post('https://reqres.in/api/login', {
         data: { email: 'eve.holt@reqres.in', password: 'cityslicka' },
@@ -55,7 +54,7 @@ test('POST Login Successful', async ({ request }) => {
     expect(data).toHaveProperty('token');
 });
 
-// 6️⃣ POST Login Unsuccessful
+
 test('POST Login Unsuccessful', async ({ request }) => {
     const response = await request.post('https://reqres.in/api/login', {
         data: { email: 'peter@klaven' }, // missing password
@@ -66,7 +65,7 @@ test('POST Login Unsuccessful', async ({ request }) => {
     expect(data.error).toBe('Missing password');
 });
 
-// 7️⃣ PUT Update User
+
 test('PUT Update User', async ({ request }) => {
     const response = await request.put('https://reqres.in/api/users/2', {
         data: { name: 'Jane', job: 'Manager' },
@@ -81,7 +80,7 @@ test('PUT Update User', async ({ request }) => {
 
 
 test('GET List Users - Basic Status & Data Check with First User Log', async ({ request }) => {
-    // Send GET request with optional Authorization header
+ 
     const response = await request.get('https://reqres.in/api/users?page=2', {
         headers: API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {},
     });
@@ -211,4 +210,44 @@ test('GET List Users Page 1 - Validate 1st and 2nd User with API Key', async ({ 
     expect(user2.id).toBe(2);
     expect(user2.first_name).toBe('Janet');
     expect(user2.email).toBe('janet.weaver@reqres.in');
+});
+// ---------------------------
+// Negative Test 1: GET user with invalid ID (string)
+// ---------------------------
+const REQRES_BASE = 'https://reqres.in/api';
+
+// ---------------------------
+// Negative Test 1: GET single user with invalid ID format
+// ---------------------------
+test('GET Single User - Invalid ID format', async ({ request }) => {
+    const response = await request.get(`${REQRES_BASE}/users/invalid-id`, {
+        headers: { Authorization: `Bearer ${API_KEY}` },
+    });
+
+    expect(response.status()).toBe(404);
+
+    const data = await response.json().catch(() => ({})); // Reqres may return empty body
+    console.log('Attempted to fetch user with invalid ID "invalid-id"');
+    console.log('Response Status:', response.status());
+    console.log('Response Body:', data);
+    console.log('✅ Negative test passed: 404 returned for invalid ID format');
+});
+
+// ---------------------------
+// Negative Test 2: POST login with empty credentials
+// ---------------------------
+test('POST Login - Empty email and password', async ({ request }) => {
+    const response = await request.post(`${REQRES_BASE}/login`, {
+        headers: { Authorization: `Bearer ${API_KEY}` },
+        data: { email: '', password: '' }
+    });
+
+    const data = await response.json();
+    expect(response.status()).toBe(400);
+    expect(data.error).toBe('Missing email or username');
+
+    console.log('Attempted to login with empty email and password');
+    console.log('Response Status:', response.status());
+    console.log('Response Body:', data);
+    console.log('✅ Negative test passed: 400 returned with proper error message');
 });
