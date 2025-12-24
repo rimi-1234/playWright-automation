@@ -31,9 +31,50 @@ test.describe('JSONPlaceholder - Read Operations', () => {
     expect(body.title).toBe('qui est esse');
   });
 
+
+});
+
+  test('POST /posts creates a new post', async ({ request }) => {
+    const response = await request.post(`${BASE_URL}/posts`, {
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      data: {
+        title: 'Automation Assignment',
+        body: 'Testing with Playwright',
+        userId: 1,
+      }
+    });
+
+    expect(response.status()).toBe(201);
+    const body = await response.json();
+    
+
+    expect(body.id).toBe(101); 
+    expect(body.title).toBe('Automation Assignment');
+    expect(body.body).toBe('Testing with Playwright');
+    expect(body.userId).toBe(1);
+  });
+test('DELETE /posts/1 deletes a post', async ({ request }) => {
+  const response = await request.delete(`${BASE_URL}/posts/1`);
+  expect(response.status()).toBe(200);
+});
   test('GET /posts/invalid-id handles 404 Not Found', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/posts/999999`);
     expect(response.status()).toBe(404);
   });
+test('PATCH /posts/1 partially updates a post', async ({ request }) => {
+  const response = await request.patch(`${BASE_URL}/posts/1`, {
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+    data: {
+      title: 'Partially Updated Title',
+    },
+  });
 
+  expect(response.status()).toBe(200);
+
+  const body = await response.json();
+  expect(body.title).toBe('Partially Updated Title');
 });
