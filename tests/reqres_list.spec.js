@@ -186,11 +186,11 @@ for (let page = 1; page <= 10; page++) {
 }
 
 
-test('GET List Users Page 1 - Validate 1st and 2nd User', async ({ request }) => {
+test('GET List Users Page 1 - Validate 1st and 2nd User with API Key', async ({ request }) => {
     const response = await request.get('https://reqres.in/api/users?page=1', {
         headers: {
-            // ✅ Using the browser User-Agent to ensure we don't get blocked
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0',
+            'Authorization': `Bearer ${API_KEY}` // ✅ Include API key
         }
     });
 
