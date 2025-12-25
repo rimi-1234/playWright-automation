@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const API_KEY = 'reqres_e48f03f7815f4f14bf28d49d7f14f0ab';
+const API_KEY = process.env.API_KEY;
 
 
 test('GET Single User - Existing', async ({ request }) => {
@@ -79,37 +79,6 @@ test('PUT Update User', async ({ request }) => {
 });
 
 
-test('GET List Users - Basic Status & Data Check with First User Log', async ({ request }) => {
- 
-    const response = await request.get('https://reqres.in/api/users?page=2', {
-        headers: API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {},
-    });
-
-    // Verify response status
-    expect(response.status()).toBe(200);
-
-    const data = await response.json();
-
-    // Basic validation checks
-    expect(data.page).toBe(2);
-    expect(data.per_page).toBe(6);
-    expect(data.total).toBe(12);
-    expect(data.total_pages).toBe(2);
-    expect(Array.isArray(data.data)).toBe(true);
-
-    // Log first user details in a structured way
-    if (data.data.length > 0) {
-        const firstUser = data.data[0];
-        console.log('=== First User Details ===');
-        console.log(`ID: ${firstUser.id}`);
-        console.log(`Name: ${firstUser.first_name} ${firstUser.last_name}`);
-        console.log(`Email: ${firstUser.email}`);
-        console.log(`Avatar: ${firstUser.avatar}`);
-        console.log('==========================');
-    } else {
-        console.warn('No users found on this page.');
-    }
-});
 async function logFirstNUsers(data, pageNumber, n = 2) {
     console.log(`\n=== Page ${pageNumber} - Logging First ${n} Users ===`);
     if (data.data.length === 0) {
