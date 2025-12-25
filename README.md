@@ -25,7 +25,7 @@ Clone the repository:
 
 Bash
 
-git clone <your-repository-url>
+git clone https://github.com/rimi-1234/playWright-automation.git
 cd "D:\playWright automation"
 Install dependencies:
 
