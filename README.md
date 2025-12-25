@@ -36,7 +36,7 @@ Setup Environment Variables: Create a .env file in the root directory and add yo
 
 Code snippet
 
-API_KEY=your_secret_key_here
+API_KEY=reqres_e48f03f7815f4f14bf28d49d7f14f0ab
 🏃 Execution Instructions
 Run All Tests
 Bash
